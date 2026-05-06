@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "721157399846",
+    "project_id": "pet-routine-9c6eb",
+    "storage_bucket": "pet-routine-9c6eb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721157399846:android:ffbd6cef1dbdf1b1f48de7",
+        "android_client_info": {
+          "package_name": "jp.konami.pawa"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5gmS20dy0DUfRxuaLiH4TgF-ouO3WiR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
