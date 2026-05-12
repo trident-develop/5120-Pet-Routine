@@ -2,6 +2,7 @@ package org.example.project.platform
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -10,14 +11,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.example.project.ui.components.AppDialog
+import java.io.File
 
 @Composable
 actual fun rememberImagePicker(): ImagePicker {
     val context = LocalContext.current
     val activity = remember(context) { context as? Activity ?: error("ImagePicker requires Activity context") }
+    val scope = rememberCoroutineScope()
 
     var pendingCameraResult by remember { mutableStateOf<((String?) -> Unit)?>(null) }
     var pendingGalleryResult by remember { mutableStateOf<((String?) -> Unit)?>(null) }
@@ -37,7 +44,14 @@ actual fun rememberImagePicker(): ImagePicker {
     ) { uri: Uri? ->
         val cb = pendingGalleryResult
         pendingGalleryResult = null
-        cb?.invoke(uri?.toString())
+        if (uri == null) {
+            cb?.invoke(null)
+            return@rememberLauncherForActivityResult
+        }
+        scope.launch {
+            val path = withContext(Dispatchers.IO) { copyUriToInternal(activity, uri) }
+            cb?.invoke(path)
+        }
     }
 
     val cameraPermissionLauncher = rememberLauncherForActivityResult(
@@ -127,4 +141,17 @@ private fun launchCameraActivity(
     launcher: androidx.activity.result.ActivityResultLauncher<Intent>,
 ) {
     launcher.launch(Intent(activity, CameraCaptureActivity::class.java))
+}
+
+private fun copyUriToInternal(context: Context, uri: Uri): String? {
+    return try {
+        val dir = File(context.filesDir, "pet_images").apply { mkdirs() }
+        val target = File(dir, "pet_${System.currentTimeMillis()}.jpg")
+        context.contentResolver.openInputStream(uri)?.use { input ->
+            target.outputStream().use { output -> input.copyTo(output) }
+        } ?: return null
+        target.absolutePath
+    } catch (_: Throwable) {
+        null
+    }
 }

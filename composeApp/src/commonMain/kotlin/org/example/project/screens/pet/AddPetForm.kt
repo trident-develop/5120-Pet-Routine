@@ -3,7 +3,7 @@ package org.example.project.screens.pet
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -81,12 +80,14 @@ fun AddPetForm(onSave: (Pet) -> Unit) {
         weight.text.toIntOrNull()?.let { it > 0 } == true
 
     Box(
-        modifier = Modifier.pointerInput(Unit) {
-            detectTapGestures(onTap = {
+        modifier = Modifier.clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = {
                 focusManager.clearFocus()
                 keyboardController?.hide()
-            })
-        },
+            },
+        ),
     ) {
     AppCard(contentPadding = 18.dp) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -162,7 +163,7 @@ fun AddPetForm(onSave: (Pet) -> Unit) {
                         label = s.ageYrs,
                         value = age,
                         hint = "3",
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Number,
                         onChange = { tfv ->
                             val cleaned = filterDigitsNoLeadingZero(tfv.text, AGE_MAX_DIGITS)
                             petState.draftAge = if (cleaned != age.text)
@@ -176,7 +177,7 @@ fun AddPetForm(onSave: (Pet) -> Unit) {
                         label = s.weightG,
                         value = weight,
                         hint = "8400",
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Number,
                         onChange = { tfv ->
                             val cleaned = filterDigitsNoLeadingZero(tfv.text, WEIGHT_MAX_DIGITS)
                             petState.draftWeight = if (cleaned != weight.text)

@@ -5,9 +5,9 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
     <key>NSCameraUsageDescription</key>
-    <string>This app needs camera access to take a profile photo</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app needs photo library access to choose a profile photo</string>
+    <string>This app needs camera access to take a profile pet photo</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>This app needs access to save pet photos to your photo library</string>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

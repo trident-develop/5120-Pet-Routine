@@ -445,8 +445,8 @@ private fun NumericCompareRow(
         )
         Box(
             modifier = Modifier
-                .padding(horizontal = 10.dp)
-                .size(width = 70.dp, height = 28.dp)
+                .padding(horizontal = 6.dp)
+                .size(width = 58.dp, height = 26.dp)
                 .clip(AppShapes.pill)
                 .background(AppColors.SurfaceMuted),
             contentAlignment = Alignment.Center,
@@ -454,7 +454,7 @@ private fun NumericCompareRow(
             Text(
                 text = label,
                 color = AppColors.OnSurfaceMuted,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Medium,
             )
         }
@@ -487,12 +487,14 @@ private fun CompareValueCell(
                     color = if (highlighted) AppColors.Accent else AppColors.CardBorder,
                     shape = AppShapes.pill,
                 )
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .padding(horizontal = 8.dp, vertical = 5.dp),
         ) {
             Text(
                 text = value,
                 color = if (highlighted) AppColors.Accent else AppColors.OnSurface,
+                style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
             )
         }
     }

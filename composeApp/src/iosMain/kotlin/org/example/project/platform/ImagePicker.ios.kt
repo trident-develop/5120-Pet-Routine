@@ -2,16 +2,19 @@
 
 package org.example.project.platform
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.window.ComposeUIViewController
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.example.project.data.LocalAppStrings
-import org.example.project.ui.components.AppDialog
+import org.example.project.ui.components.LocalSnackbarHost
 import platform.Foundation.NSData
 import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.NSURL
@@ -24,102 +27,60 @@ import platform.UIKit.UIImagePickerControllerDelegateProtocol
 import platform.UIKit.UIImagePickerControllerOriginalImage
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UINavigationControllerDelegateProtocol
-import platform.UIKit.UIViewController
 import platform.darwin.NSObject
 
 private var currentImagePickerDelegate: NSObject? = null
 
 @Composable
 actual fun rememberImagePicker(): ImagePicker {
-    var dialog by remember { mutableStateOf<IOSDialog?>(null) }
     var pendingCameraResult by remember { mutableStateOf<((String?) -> Unit)?>(null) }
     var pendingGalleryResult by remember { mutableStateOf<((String?) -> Unit)?>(null) }
+    val snackbar = LocalSnackbarHost.current
+    val scope = rememberCoroutineScope()
     val s = LocalAppStrings.current
-
-    when (dialog) {
-        IOSDialog.SettingsCamera -> AppDialog(
-            title = s.iosCameraDisabledTitle,
-            body = s.iosCameraDisabledBody,
-            emoji = "⚙️",
-            confirmText = s.iosOpenSettings,
-            onConfirm = {
-                dialog = null
-                openIOSAppSettings()
-                pendingCameraResult?.invoke(null); pendingCameraResult = null
-            },
-            onDismiss = {
-                dialog = null
-                pendingCameraResult?.invoke(null); pendingCameraResult = null
-            },
-        )
-        IOSDialog.SettingsGallery -> AppDialog(
-            title = s.iosPhotosDisabledTitle,
-            body = s.iosPhotosDisabledBody,
-            emoji = "⚙️",
-            confirmText = s.iosOpenSettings,
-            onConfirm = {
-                dialog = null
-                openIOSAppSettings()
-                pendingGalleryResult?.invoke(null); pendingGalleryResult = null
-            },
-            onDismiss = {
-                dialog = null
-                pendingGalleryResult?.invoke(null); pendingGalleryResult = null
-            },
-        )
-        null -> Unit
-    }
+    val cameraDeniedToast = s.iosCameraPermissionToast
 
     return remember {
         object : ImagePicker {
             override fun captureFromCamera(onResult: (path: String?) -> Unit) {
                 pendingCameraResult = onResult
-                when (checkCameraStatus()) {
-                    IOSPermissionStatus.Authorized -> presentCamera { uri ->
-                        runOnMain {
-                            pendingCameraResult?.invoke(uri); pendingCameraResult = null
-                        }
+                val deliverCamera: (String?) -> Unit = { uri ->
+                    runOnMain {
+                        pendingCameraResult?.invoke(uri); pendingCameraResult = null
                     }
+                }
+                when (checkCameraStatus()) {
+                    IOSPermissionStatus.Authorized -> presentCamera(deliverCamera)
                     IOSPermissionStatus.NotDetermined -> requestCameraAccess { status ->
                         if (status == IOSPermissionStatus.Authorized) {
-                            presentCamera { uri ->
-                                runOnMain {
-                                    pendingCameraResult?.invoke(uri); pendingCameraResult = null
-                                }
-                            }
+                            presentCamera(deliverCamera)
                         } else {
-                            dialog = IOSDialog.SettingsCamera
+                            deliverCamera(null)
+                            showToast(scope, snackbar, cameraDeniedToast)
                         }
                     }
-                    IOSPermissionStatus.Denied -> dialog = IOSDialog.SettingsCamera
+                    IOSPermissionStatus.Denied -> {
+                        deliverCamera(null)
+                        showToast(scope, snackbar, cameraDeniedToast)
+                    }
                 }
             }
 
             override fun pickFromGallery(onResult: (path: String?) -> Unit) {
                 pendingGalleryResult = onResult
-                val deliver: (String?) -> Unit = { uri ->
+                presentGallery { uri ->
                     runOnMain {
                         pendingGalleryResult?.invoke(uri); pendingGalleryResult = null
                     }
-                }
-                when (checkPhotoLibraryStatus()) {
-                    IOSPhotoLibraryStatus.FullAccess -> presentGallery(deliver)
-                    IOSPhotoLibraryStatus.LimitedAccess -> presentLimitedGrid(deliver)
-                    IOSPhotoLibraryStatus.NotDetermined -> requestPhotoLibraryAccess { status ->
-                        when (status) {
-                            IOSPhotoLibraryStatus.FullAccess -> presentGallery(deliver)
-                            IOSPhotoLibraryStatus.LimitedAccess -> presentLimitedGrid(deliver)
-                            else -> dialog = IOSDialog.SettingsGallery
-                        }
-                    }
-                    IOSPhotoLibraryStatus.Denied -> dialog = IOSDialog.SettingsGallery
                 }
             }
         }
     }
 }
 
-private enum class IOSDialog { SettingsCamera, SettingsGallery }
+private fun showToast(scope: CoroutineScope, host: SnackbarHostState, message: String) {
+    scope.launch { host.showSnackbar(message) }
+}
 
 private fun presentCamera(onResult: (String?) -> Unit) {
     runOnMain {
@@ -140,30 +101,6 @@ private fun presentGallery(onResult: (String?) -> Unit) {
         currentImagePickerDelegate = delegate
         picker.delegate = delegate
         ViewControllerHolder.topController()?.presentViewController(picker, animated = true, completion = null)
-    }
-}
-
-/**
- * Custom picker for `.limited` photo-library access — system pickers ignore the
- * Limited Access selection because they run out-of-process. This grid lists only
- * PHAssets the user explicitly authorised.
- */
-private fun presentLimitedGrid(onResult: (String?) -> Unit) {
-    runOnMain {
-        val holder = arrayOfNulls<UIViewController>(1)
-        val vc = ComposeUIViewController {
-            LimitedPhotoGrid(
-                onPick = { path ->
-                    holder[0]?.dismissViewControllerAnimated(true) { onResult(path) }
-                },
-                onCancel = {
-                    holder[0]?.dismissViewControllerAnimated(true) { onResult(null) }
-                },
-                hostController = { holder[0] },
-            )
-        }
-        holder[0] = vc
-        ViewControllerHolder.topController()?.presentViewController(vc, animated = true, completion = null)
     }
 }
 

@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
@@ -18,6 +19,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         hideSystemBars()
+
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
+            if (insets.isVisible(WindowInsetsCompat.Type.ime()) ||
+                insets.isVisible(WindowInsetsCompat.Type.systemBars())
+            ) {
+                hideSystemBars()
+            }
+            insets
+        }
 
         setContent {
             App()

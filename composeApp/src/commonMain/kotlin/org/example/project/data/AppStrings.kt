@@ -159,16 +159,7 @@ interface Strings {
     fun scoreOutOf(score: Int, label: String, total: Int): String
 
     // iOS dialogs
-    val iosCameraDisabledTitle: String
-    val iosCameraDisabledBody: String
-    val iosPhotosDisabledTitle: String
-    val iosPhotosDisabledBody: String
-    val iosOpenSettings: String
-
-    // Limited photo grid
-    val gridChoosePhoto: String
-    val gridManage: String
-    val gridNoAccessible: String
+    val iosCameraPermissionToast: String
 
     // Enums
     fun petType(t: PetType): String
@@ -318,15 +309,7 @@ object EnglishStrings : Strings {
     override val playAgain = "Play again"
     override fun scoreOutOf(score: Int, label: String, total: Int) = "$score $label out of $total"
 
-    override val iosCameraDisabledTitle = "Camera disabled"
-    override val iosCameraDisabledBody = "Camera access has been turned off. Open Settings to enable it for this app."
-    override val iosPhotosDisabledTitle = "Photos disabled"
-    override val iosPhotosDisabledBody = "Photo library access is off. Open Settings to enable it for this app."
-    override val iosOpenSettings = "Open Settings"
-
-    override val gridChoosePhoto = "Choose photo"
-    override val gridManage = "Manage"
-    override val gridNoAccessible = "No accessible photos.\nTap Manage to choose which photos this app can see."
+    override val iosCameraPermissionToast = "Please grant camera access"
 
     override fun petType(t: PetType) = when (t) {
         PetType.Dog -> "Dog"
@@ -511,15 +494,7 @@ object SpanishStrings : Strings {
     override val playAgain = "Jugar de nuevo"
     override fun scoreOutOf(score: Int, label: String, total: Int) = "$score $label de $total"
 
-    override val iosCameraDisabledTitle = "Cámara desactivada"
-    override val iosCameraDisabledBody = "El acceso a la cámara está desactivado. Abre Ajustes para activarlo para esta app."
-    override val iosPhotosDisabledTitle = "Fotos desactivadas"
-    override val iosPhotosDisabledBody = "El acceso a la fototeca está desactivado. Abre Ajustes para activarlo para esta app."
-    override val iosOpenSettings = "Abrir Ajustes"
-
-    override val gridChoosePhoto = "Elegir foto"
-    override val gridManage = "Gestionar"
-    override val gridNoAccessible = "No hay fotos accesibles.\nToca Gestionar para elegir qué fotos puede ver esta app."
+    override val iosCameraPermissionToast = "Concede acceso a la cámara"
 
     override fun petType(t: PetType) = when (t) {
         PetType.Dog -> "Perro"

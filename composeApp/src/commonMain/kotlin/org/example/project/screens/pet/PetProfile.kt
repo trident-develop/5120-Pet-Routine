@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -87,7 +88,7 @@ fun PetProfilePager(onAddNew: () -> Unit) {
         ) { page ->
             val pet = state.pets[page]
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().imePadding(),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 contentPadding = PaddingValues(bottom = 96.dp),
             ) {
@@ -208,20 +209,19 @@ private fun PetHeaderCard(pet: Pet) {
 
 @Composable
 private fun PetMetaPill(label: String, value: String) {
-    Row(
+    Column(
         modifier = Modifier
-            .clip(AppShapes.pill)
-            .background(AppColors.SurfaceMuted, AppShapes.pill)
-            .border(1.dp, AppColors.CardBorder, AppShapes.pill)
+            .clip(AppShapes.medium)
+            .background(AppColors.SurfaceMuted, AppShapes.medium)
+            .border(1.dp, AppColors.CardBorder, AppShapes.medium)
             .padding(horizontal = 12.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = label,
             color = AppColors.OnSurfaceDim,
             style = MaterialTheme.typography.labelMedium,
         )
-        Spacer(Modifier.size(6.dp))
         Text(
             text = value,
             color = AppColors.OnSurface,

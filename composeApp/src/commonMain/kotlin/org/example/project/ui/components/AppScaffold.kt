@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Snackbar
@@ -20,6 +21,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import org.example.project.theme.AppColors
 import org.example.project.theme.AppShapes
@@ -36,6 +38,7 @@ fun AppScaffold(
     content: @Composable () -> Unit,
 ) {
     val systemInsets = WindowInsets.safeDrawing.asPaddingValues()
+    val imeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     val snackbarHostState = remember { SnackbarHostState() }
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -52,7 +55,7 @@ fun AppScaffold(
                     ) {
                         content()
                     }
-                    bottomBar()
+                    if (!imeVisible) bottomBar()
                 }
                 SnackbarHost(
                     hostState = snackbarHostState,
