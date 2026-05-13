@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:721157399846:android:ffbd6cef1dbdf1b1f48de7",
+        "mobilesdk_app_id": "1:721157399846:android:3e4e82e3451fcc9cf48de7",
         "android_client_info": {
-          "package_name": "jp.konami.pawa"
+          "package_name": "org.inaturalist.andr"
         }
       },
       "oauth_client": [],
