@@ -5,32 +5,32 @@ import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import org.example.project.db.ScoreDao
+import org.example.project.db.ScoreDbHelper
+import org.example.project.db.ScoreStorage
+import org.example.project.privacy.MainClient
 
 class MainActivity : ComponentActivity() {
     private var multiTouchDetected = false
+    private val scoreStorage by lazy {
+        ScoreStorage(
+            scoreDao = ScoreDao(
+                dbHelper = ScoreDbHelper(this)
+            )
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         hideSystemBars()
-
-        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
-            if (insets.isVisible(WindowInsetsCompat.Type.ime()) ||
-                insets.isVisible(WindowInsetsCompat.Type.systemBars())
-            ) {
-                hideSystemBars()
-            }
-            insets
-        }
-
+        val mainClient = MainClient(this, scoreStorage)
         setContent {
-            App()
+            App(mainClient, scoreStorage)
         }
     }
 
@@ -67,10 +67,9 @@ class MainActivity : ComponentActivity() {
         }
         return super.dispatchTouchEvent(ev)
     }
-}
 
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    App()
+    override fun onResume() {
+        super.onResume()
+        hideSystemBars()
+    }
 }

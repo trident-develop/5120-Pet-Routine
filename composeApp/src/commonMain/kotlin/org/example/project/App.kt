@@ -13,23 +13,23 @@ import org.example.project.screens.LoadingScreen
 import org.example.project.screens.NoInternetScreen
 import org.example.project.theme.AppTheme
 
-@Composable
-@Preview
-fun App() {
-    val storage = rememberKeyValueStorage()
-    val petState = rememberPetState(storage)
-
-    CompositionLocalProvider(
-        LocalPetState provides petState,
-        LocalAppStrings provides stringsFor(petState.language),
-        LocalAppLanguage provides petState.language,
-    ) {
-        AppTheme(darkMode = petState.darkMode) {
-            Gray(
-                loading = { LoadingScreen() },
-                noInternet = { NoInternetScreen(it) },
-                white = { AppNavGraph() }
-            )
-        }
-    }
-}
+//@Composable
+//@Preview
+//fun App() {
+//    val storage = rememberKeyValueStorage()
+//    val petState = rememberPetState(storage)
+//
+//    CompositionLocalProvider(
+//        LocalPetState provides petState,
+//        LocalAppStrings provides stringsFor(petState.language),
+//        LocalAppLanguage provides petState.language,
+//    ) {
+//        AppTheme(darkMode = petState.darkMode) {
+//            Gray(
+//                loading = { LoadingScreen() },
+//                noInternet = { NoInternetScreen(it) },
+//                white = { AppNavGraph() }
+//            )
+//        }
+//    }
+//}

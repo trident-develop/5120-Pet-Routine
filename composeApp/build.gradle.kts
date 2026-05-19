@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.zip.ZipEntry
@@ -11,6 +12,14 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.lsparanoid)
+}
+
+lsparanoid {
+    seed = 81
+    classFilter = { it.startsWith("org.inaturalist.andr") }
+    includeDependencies = false
+    variantFilter = { true }
 }
 
 kotlin {
@@ -32,6 +41,11 @@ kotlin {
     
     sourceSets {
         androidMain.dependencies {
+            implementation(libs.flow.extensions)
+            implementation(libs.immutable.collections)
+            implementation(libs.installreferrer)
+            implementation(libs.fuel)
+            implementation(libs.androidx.fragment.ktx)
             implementation(libs.androidx.splashscreen)
             implementation(libs.play.services.ads)
             implementation(libs.firebase.messaging)
@@ -76,8 +90,8 @@ android {
         applicationId = "org.inaturalist.andr"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
     }
     packaging {
         resources {

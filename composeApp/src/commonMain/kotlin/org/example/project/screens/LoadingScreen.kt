@@ -7,6 +7,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,18 +30,26 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.DisableBack
 import org.example.project.data.LocalAppStrings
 import org.example.project.theme.AppColors
 import org.example.project.theme.AppShapes
+import org.jetbrains.compose.resources.painterResource
+import petroutine.composeapp.generated.resources.Res
+import petroutine.composeapp.generated.resources.bg_1
+import petroutine.composeapp.generated.resources.chicken
 import kotlin.math.cos
 import kotlin.math.sin
 
 @Composable
 fun LoadingScreen() {
     val s = LocalAppStrings.current
+    DisableBack()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -49,24 +58,25 @@ fun LoadingScreen() {
     ) {
         AnimatedConstellation(modifier = Modifier.fillMaxSize())
 
+        Image(
+            painter = painterResource(Res.drawable.bg_1),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
         Column(
             modifier = Modifier.padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             BreathingGlow()
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(98.dp))
             Text(
                 text = s.loadingTitle,
                 color = AppColors.OnSurface,
                 fontWeight = FontWeight.ExtraBold,
-                fontSize = 24.sp,
-            )
-            Spacer(Modifier.height(6.dp))
-            Text(
-                text = s.loadingSubtitle,
-                color = AppColors.OnSurfaceMuted,
-                style = MaterialTheme.typography.bodyMedium,
+                fontSize = 34.sp,
             )
             Spacer(Modifier.height(28.dp))
             InfiniteProgressBar()
@@ -81,7 +91,7 @@ private fun BreathingGlow() {
     val transition = rememberInfiniteTransition(label = "glow")
     val pulse by transition.animateFloat(
         initialValue = 0.85f,
-        targetValue = 1.15f,
+        targetValue = 1.75f,
         animationSpec = infiniteRepeatable(tween(1400), RepeatMode.Reverse),
         label = "pulse",
     )
@@ -101,7 +111,7 @@ private fun BreathingGlow() {
     val accentSoft = AppColors.AccentSoft
     val accentDim = AppColors.AccentDim
     Box(
-        modifier = Modifier.size(160.dp),
+        modifier = Modifier.size(200.dp),
         contentAlignment = Alignment.Center,
     ) {
         Canvas(
@@ -126,7 +136,7 @@ private fun BreathingGlow() {
         }
         Canvas(
             modifier = Modifier
-                .size(110.dp)
+                .size(250.dp)
                 .scale(pulse * 0.95f),
         ) {
             val cx = size.width / 2f
@@ -143,7 +153,12 @@ private fun BreathingGlow() {
                 )
             }
         }
-        Text(text = "🦊", fontSize = 56.sp)
+        Image(
+            painter = painterResource(Res.drawable.chicken),
+            contentDescription = null,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
 
@@ -237,4 +252,40 @@ private fun AnimatedConstellation(modifier: Modifier) {
             )
         }
     }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    widthDp = 360,
+    heightDp = 640
+)
+
+@Preview(
+    name = "mdpi (160)",
+    widthDp = 320,
+    heightDp = 680,
+    fontScale = 1.0f,
+    showBackground = true,
+    showSystemUi = true
+)
+
+@Preview(
+    name = "hdpi (240)",
+    widthDp = 450,
+    heightDp = 800,
+    fontScale = 1.0f,
+    showBackground = true,
+    showSystemUi = true
+)
+
+@Composable
+private fun ScreenPreview() {
+
+    LoadingScreen()
 }

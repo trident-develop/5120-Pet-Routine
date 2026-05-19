@@ -1,5 +1,6 @@
 package org.example.project.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,21 +19,41 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.DisableBack
 import org.example.project.data.LocalAppStrings
 import org.example.project.theme.AppColors
+import org.jetbrains.compose.resources.painterResource
+import petroutine.composeapp.generated.resources.Res
+import petroutine.composeapp.generated.resources.bg_1
 
 @Composable
 fun NoInternetScreen(onRetry: () -> Unit) {
+    DisableBack()
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(AppColors.backgroundGradient),
         contentAlignment = Alignment.Center,
     ) {
+        Image(
+            painter = painterResource(Res.drawable.bg_1),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(0.6f)),
+            contentAlignment = Alignment.Center,
+        ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -40,7 +61,7 @@ fun NoInternetScreen(onRetry: () -> Unit) {
             ) {
                 Text(
                     text = "📡",
-                    fontSize = 64.sp
+                    fontSize = 84.sp
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
@@ -71,10 +92,48 @@ fun NoInternetScreen(onRetry: () -> Unit) {
                 ) {
                     Text(
                         text = "Retry",
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
         }
+
     }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true
+)
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    widthDp = 360,
+    heightDp = 640
+)
+
+@Preview(
+    name = "mdpi (160)",
+    widthDp = 320,
+    heightDp = 680,
+    fontScale = 1.0f,
+    showBackground = true,
+    showSystemUi = true
+)
+
+@Preview(
+    name = "hdpi (240)",
+    widthDp = 450,
+    heightDp = 800,
+    fontScale = 1.0f,
+    showBackground = true,
+    showSystemUi = true
+)
+
+@Composable
+private fun ScreenPreview() {
+
+    NoInternetScreen { }
+}

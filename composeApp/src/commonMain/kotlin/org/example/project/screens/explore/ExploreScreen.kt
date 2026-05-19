@@ -40,6 +40,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.example.project.QuitGame
 import org.example.project.data.Animal
 import org.example.project.data.AnimalCategory
 import org.example.project.data.AnimalRepository
@@ -55,6 +56,7 @@ import org.example.project.ui.components.ScreenHeader
 
 @Composable
 fun ExploreScreen() {
+    QuitGame()
     var query by remember { mutableStateOf(TextFieldValue("")) }
     var categoryFilter by remember { mutableStateOf<AnimalCategory?>(null) }
     var selected by remember { mutableStateOf<Animal?>(null) }

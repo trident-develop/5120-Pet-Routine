@@ -48,6 +48,16 @@
             android:name="org.example.project.platform.CameraCaptureActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
+        <provider
+            android:name="org.example.project.platform.RoutineProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/paths" />
+        </provider>
     </application>
 
 </manifest>

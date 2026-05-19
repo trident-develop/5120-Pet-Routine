@@ -186,7 +186,7 @@ object EnglishStrings : Strings {
     override val back = "Back"
     override val retry = "Retry"
 
-    override val loadingTitle = "Tracking the wild"
+    override val loadingTitle = "Loading..."
     override val loadingSubtitle = "Gathering paw prints from across the planet…"
 
     override val noInternet = "No Internet Connection"
